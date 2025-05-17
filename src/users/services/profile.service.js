@@ -1,4 +1,5 @@
 import httpInstance from "../../shared/services/http.instance.js";
+import { Profile } from "../model/profile.entity.js";
 
 /**
  * @class ProfileService
@@ -9,11 +10,24 @@ export class ProfileService {
     resourceEndpoint = import.meta.env.VITE_PROFILES_ENDPOINT_PATH;
 
     /**
-     * Retrieves all profiles
-     * @returns {Promise<AxiosResponse<any>>} Promise that resolves to an array of profiles
+     * Retrieves all profiles (adapted for static JSON file structure)
+     * @returns {Promise<Profile[]>} Promise that resolves to an array of Profile instances
      */
-    getAll() {
-        return httpInstance.get(this.resourceEndpoint);
+    async getAll() {
+        try {
+            const response = await fetch("/db.json");
+            const json = await response.json();
+
+            if (!json.profiles || !Array.isArray(json.profiles)) {
+                console.error("No se encontraron perfiles válidos en el JSON");
+                return [];
+            }
+
+            return json.profiles.map(p => new Profile(p));
+        } catch (error) {
+            console.error("Error al obtener perfiles:", error);
+            return [];
+        }
     }
 
     /**
