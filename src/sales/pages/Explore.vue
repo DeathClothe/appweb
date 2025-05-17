@@ -59,24 +59,23 @@ export default {
     };
   },
   mounted() {
-    const clotheService = new ClotheService();
-    const profileService = new ProfileService();
+  const clotheService = new ClotheService();
+  const profileService = new ProfileService();
 
-    Promise.all([clotheService.getAll(), profileService.getAll()])
-        .then(([clothes, profilesResponse]) => {
-          const profiles = profilesResponse.data || profilesResponse;
-          const publicadosIds = profiles.flatMap(
-              (profile) => profile.publicados || []
-          );
-          const publicados = clothes.filter((clothe) =>
-              publicadosIds.includes(clothe.id)
-          );
-          this.offers = publicados.slice(0, 8);
-        })
-        .catch((error) => {
-          console.error("Error cargando prendas o perfiles:", error);
-        });
-  },
+  Promise.all([clotheService.getAll(), profileService.getAll()])
+    .then(([clothes, profiles]) => {
+      const publicadosIds = profiles.flatMap(
+        (profile) => profile.publicados || []
+      );
+      const publicados = clothes.filter((clothe) =>
+        publicadosIds.includes(clothe.id)
+      );
+      this.offers = publicados.slice(0, 8);
+    })
+    .catch((error) => {
+      console.error("Error cargando prendas o perfiles:", error);
+    });
+},
   methods: {
     scrollLeft(carousel) {
       const container =
