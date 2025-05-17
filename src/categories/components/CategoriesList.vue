@@ -17,10 +17,17 @@ const categories = ref([]);
 
 const fetchCategories = async () => {
   try {
-    const response = await httpInstance.get("/categories"); // Ajusta la URL de tu API
-    categories.value = response.data;
+    const response = await fetch("/db.json");
+    const json = await response.json();
+
+    if (!json.categories || !Array.isArray(json.categories)) {
+      console.error("No se encontraron categorías válidas.");
+      return;
+    }
+
+    categories.value = json.categories;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error al obtener categorías:", error);
   }
 };
 
