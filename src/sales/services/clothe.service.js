@@ -1,5 +1,5 @@
 import httpInstance from "../../shared/services/http.instance.js";
-
+import {Clothe} from "../model/clothe.entity.js"
 /**
  * @class ClotheService
  * @description Service class for handling CRUD operations on categories using HTTP requests
@@ -12,16 +12,37 @@ export class ClotheService {
      * Retrieves all clothes
      * @returns {Promise<AxiosResponse<any>>} Promise that resolves to an array of clothes
      */
-    getAll() {
-        return httpInstance.get(this.resourceEndpoint)
-            .then(response => response.data)
-            .catch(error => {
-                console.error("Error fetching all clothes:", error);
-                return [];
-            });
+ async getAll() {
 
-    }
+  try {
 
+   const response = await fetch(this.resourceEndpoint);
+
+   const json = await response.json();
+
+
+
+   if (!json.clothes || !Array.isArray(json.clothes)) {
+
+    console.error('NO');
+
+    return [];
+
+   }
+
+
+
+   return json.clothes.map(cl => new Clothe(cl));
+
+  } catch (error) {
+
+   console.error('No hay:', error);
+
+   return [];
+
+  }
+
+ }
     getById(id) {
         return httpInstance.get(`${this.resourceEndpoint}/${id}`)
             .then(response => response.data)
