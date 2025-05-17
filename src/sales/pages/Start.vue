@@ -72,30 +72,25 @@ export default {
       return (precio - precio * descuento).toFixed(2);
     },
   },
-  created() {
-    const clotheService = new ClotheService();
-    const profileService = new ProfileService();
+created() {
+  const clotheService = new ClotheService();
+  const profileService = new ProfileService();
 
-    Promise.all([
-      clotheService.getAll(),          // trae todas las prendas
-      profileService.getAll()          // trae todos los perfiles (usuarios)
-    ])
-        .then(([clothes, profilesResponse]) => {
-          const profiles = profilesResponse.data;  // accede a los perfiles reales
+  Promise.all([
+    clotheService.getAll(),   // retorna array de Clothe
+    profileService.getAll()   // retorna array de Profile
+  ])
+    .then(([clothes, profiles]) => {
+      // Ya no necesitas acceder a `.data`
+      const publicadosIds = profiles.flatMap(profile => profile.publicados || []);
 
-          // Obtén todos los IDs de prendas publicadas por todos los usuarios
-          const publicadosIds = profiles.flatMap(profile => profile.publicados || []);
-
-          // Filtra las prendas que están publicadas
-          this.novedades = clothes.filter(clothe => publicadosIds.includes(clothe.id));
-
-          // Ejemplo: las primeras 4 novedades para ofertas
-          this.ofertas = this.novedades.slice(0, 4);
-        })
-        .catch(error => {
-          console.error("Error cargando prendas o perfiles:", error);
-        });
-  }
+      this.novedades = clothes.filter(clothe => publicadosIds.includes(clothe.id));
+      this.ofertas = this.novedades.slice(0, 4);
+    })
+    .catch(error => {
+      console.error("Error cargando prendas o perfiles:", error);
+    });
+}
 
 };
 </script>
