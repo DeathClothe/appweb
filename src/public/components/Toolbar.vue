@@ -40,14 +40,8 @@ export default {
     ...mapState(useProfileStore, ["isAuthenticated"]),
   },
   methods: {
-    navigateTo(route) {
-      if (this.isAuthenticated) {
+    navigateTo(route) { 
         this.$router.push(route);
-      } else {
-
-        alert("Debes iniciar sesión para acceder a esta sección.");
-        this.$router.push('/login'); // por ejemplo
-      }
     },
     searchItems() {
       console.log("Buscar:", this.searchQuery);
