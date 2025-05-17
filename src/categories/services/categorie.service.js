@@ -12,27 +12,21 @@ export class CategoryService {
      * Obtiene todas las categorías
      * @returns {Promise<AxiosResponse<any>>} Promise que resuelve a un array de categorías
      */
-    getAll() {
-        return httpInstance.get(this.resourceEndpoint)
-            .then(response => response.data)
-            .catch(error => {
-                console.error("Error fetching all categories:", error);
-                return [];
-            });
-    }
+   async getAll() {
+        try {
+            const response = await fetch("/db.json");
+            const json = await response.json();
 
-    /**
-     * Obtiene una categoría por su id
-     * @param {string} id - ID de la categoría
-     * @returns {Promise<Object|null>} Promise que resuelve a la categoría o null si no existe
-     */
-    getById(id) {
-        return httpInstance.get(`${this.resourceEndpoint}/${id}`)
-            .then(response => response.data)
-            .catch(error => {
-                console.error(`Error fetching category with ID ${id}:`, error);
-                return null;
-            });
+            if (!json.categories || !Array.isArray(json.categories)) {
+                console.error("No se encontraron categorías en db.json");
+                return [];
+            }
+
+            return json.categories;
+        } catch (error) {
+            console.error("Error al obtener categorías:", error);
+            return [];
+        }
     }
 
     /**
