@@ -20,26 +20,26 @@ export class AuthService {
         }
     }
 
-    async login(email, password) {
-        try {
-            const response = await httpInstance.get(
-                `${this.baseUrl}${this.resourceEndpoint}?email=${email}`
-            );
+   async login(email, password) {
+    try {
+        const response = await fetch("/db.json");
+        const data = await response.json();
 
-            if (response.data.length === 0) {
-                return null;
-            }
-
-            const userData = response.data[0];
-
-            if (userData.password === password) {
-                return new Profile(userData);
-            }
-
+        if (!Array.isArray(data.profiles)) {
+            console.error("No se encontraron perfiles.");
             return null;
-        } catch (error) {
-            console.error("Login error:", error);
-            throw new Error("Error durante el inicio de sesión. Por favor, intenta de nuevo.");
         }
+
+        const userData = data.profiles.find(p => p.email === email);
+
+        if (userData && userData.password === password) {
+            return new Profile(userData);
+        }
+
+        return null;
+    } catch (error) {
+        console.error("Login error:", error);
+        throw new Error("Error durante el inicio de sesión. Por favor, intenta de nuevo.");
     }
+}
 }
