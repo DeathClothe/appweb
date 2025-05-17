@@ -12,7 +12,7 @@
 import { ref, onMounted } from "vue";
 import httpInstance from "@/shared/services/http.instance.js";
 import CategorieCard from "./CategorieCard.vue";
-
+import { Category } from "@/categories/model/category.entity.js";
 const categories = ref([]);
 
 const fetchCategories = async () => {
@@ -25,7 +25,8 @@ const fetchCategories = async () => {
       return;
     }
 
-    categories.value = json.categories;
+    // Convertir a instancias de Category
+    categories.value = json.categories.map(cat => new Category(cat));
   } catch (error) {
     console.error("Error al obtener categorías:", error);
   }
